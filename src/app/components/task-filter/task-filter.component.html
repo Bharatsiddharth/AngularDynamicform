@@ -1,0 +1,10 @@
+<div class="btn-group mb-3">
+  <button *ngFor="let filter of filters" 
+          type="button" 
+          class="btn" 
+          [class.btn-primary]="currentFilter === filter.value" 
+          [class.btn-outline-primary]="currentFilter !== filter.value"
+          (click)="onFilterChange(filter.value)">
+    {{ filter.label }}
+  </button>
+</div>

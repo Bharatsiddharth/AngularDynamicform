@@ -1,0 +1,132 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2>Dynamic User Form</h2>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <!-- User Type Selection -->
+        <div class="form-group mb-3">
+          <label for="userType">User Type *</label>
+          <select id="userType" formControlName="userType" class="form-control">
+            <option value="">Select User Type</option>
+            <option *ngFor="let type of userTypes" [value]="type">{{ type }}</option>
+          </select>
+          <div *ngIf="userForm.get('userType')?.invalid && userForm.get('userType')?.touched" class="text-danger">
+            User Type is required
+          </div>
+        </div>
+
+        <!-- Dynamic Fields based on User Type -->
+        <ng-container *ngIf="userForm.get('userType')?.value">
+          <!-- Admin Fields -->
+          <ng-container *ngIf="userForm.get('userType')?.value === 'Admin'">
+            <div class="form-group mb-3">
+              <label for="email">Email *</label>
+              <input type="email" id="email" formControlName="email" class="form-control" placeholder="Enter email">
+              <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('email')?.errors?.['required']">Email is required</span>
+                <span *ngIf="userForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="role">Role *</label>
+              <select id="role" formControlName="role" class="form-control">
+                <option value="">Select Role</option>
+                <option *ngFor="let role of roles" [value]="role.value">{{ role.name }}</option>
+              </select>
+              <div *ngIf="userForm.get('role')?.invalid && userForm.get('role')?.touched" class="text-danger">
+                Role is required
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label>Permissions</label>
+              <div formArrayName="permissions">
+                <div class="form-check" *ngFor="let permission of permissionsArray.controls; let i = index">
+                  <div [formGroupName]="i">
+                    <input type="checkbox" class="form-check-input" [id]="'permission-' + i" formControlName="checked">
+                    <label class="form-check-label" [for]="'permission-' + i">
+                      {{ permission.get('name')?.value }}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Guest Fields -->
+          <ng-container *ngIf="userForm.get('userType')?.value === 'Guest'">
+            <div class="form-group mb-3">
+              <label for="name">Name *</label>
+              <input type="text" id="name" formControlName="name" class="form-control" placeholder="Enter name">
+              <div *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched" class="text-danger">
+                Name is required
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="visitReason">Visit Reason *</label>
+              <textarea id="visitReason" formControlName="visitReason" class="form-control" rows="3" placeholder="Enter reason for visit"></textarea>
+              <div *ngIf="userForm.get('visitReason')?.invalid && userForm.get('visitReason')?.touched" class="text-danger">
+                Visit reason is required
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="visitDate">Visit Date *</label>
+              <input type="date" id="visitDate" formControlName="visitDate" class="form-control">
+              <div *ngIf="userForm.get('visitDate')?.invalid && userForm.get('visitDate')?.touched" class="text-danger">
+                Visit date is required
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Subscriber Fields -->
+          <ng-container *ngIf="userForm.get('userType')?.value === 'Subscriber'">
+            <div class="form-group mb-3">
+              <label for="name">Name *</label>
+              <input type="text" id="name" formControlName="name" class="form-control" placeholder="Enter name">
+              <div *ngIf="userForm.get('name')?.invalid && userForm.get('name')?.touched" class="text-danger">
+                Name is required
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="email">Email *</label>
+              <input type="email" id="email" formControlName="email" class="form-control" placeholder="Enter email">
+              <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="text-danger">
+                <span *ngIf="userForm.get('email')?.errors?.['required']">Email is required</span>
+                <span *ngIf="userForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label>Subscription Type *</label>
+              <div *ngFor="let type of subscriptionTypes; let i = index" class="form-check">
+                <input type="radio" [id]="'subscription-' + i" [value]="type.value" formControlName="subscriptionType" class="form-check-input">
+                <label [for]="'subscription-' + i" class="form-check-label">{{ type.name }}</label>
+              </div>
+              <div *ngIf="userForm.get('subscriptionType')?.invalid && userForm.get('subscriptionType')?.touched" class="text-danger">
+                Subscription type is required
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+
+        <!-- Form Buttons -->
+        <div class="form-group mt-4">
+          <button type="submit" class="btn btn-primary me-2" [disabled]="userForm.invalid">Submit</button>
+          <button type="button" class="btn btn-secondary" (click)="resetForm()">Reset</button>
+        </div>
+      </form>
+
+      <!-- Display Submitted Data -->
+      <div *ngIf="submittedData" class="mt-4">
+        <h3>Submitted Data:</h3>
+        <pre class="bg-light p-3 border rounded">{{ submittedData | json }}</pre>
+      </div>
+    </div>
+  </div>
+</div>

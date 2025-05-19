@@ -1,0 +1,61 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2>Task List</h2>
+    </div>
+    <div class="card-body">
+      <!-- Task Filters -->
+      <app-task-filter 
+        [currentFilter]="currentFilter" 
+        (filterChange)="onFilterChange($event)">
+      </app-task-filter>
+
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center my-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="error" class="alert alert-danger">
+        {{ error }}
+      </div>
+
+      <!-- Task List -->
+      <div *ngIf="!loading && !error">
+        <div *ngIf="filteredTasks.length === 0" class="alert alert-info">
+          No tasks found for the selected filter.
+        </div>
+
+        <ul class="list-group mb-3" *ngIf="filteredTasks.length > 0">
+          <li *ngFor="let task of displayedTasks" 
+              class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              <input type="checkbox" 
+                     class="form-check-input me-2" 
+                     [checked]="task.completed" 
+                     (change)="toggleTaskStatus(task)">
+              <span [class.text-decoration-line-through]="task.completed">
+                {{ task.title }}
+              </span>
+            </div>
+            <span class="badge" 
+                  [class.bg-success]="task.completed" 
+                  [class.bg-warning]="!task.completed">
+              {{ task.completed ? 'Completed' : 'Pending' }}
+            </span>
+          </li>
+        </ul>
+
+        <!-- Pagination -->
+        <app-pagination 
+          [totalItems]="filteredTasks.length" 
+          [pageSize]="pageSize" 
+          [currentPage]="currentPage" 
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+</div>
